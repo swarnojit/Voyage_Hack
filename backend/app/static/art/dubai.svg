@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="340" viewBox="0 0 520 340" role="img" aria-label="Stylized illustrated destination skyline">
+ <defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c7e7f6"/><stop offset="1" stop-color="#a3d5ea"/></linearGradient><linearGradient id="building" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#52859b"/><stop offset="1" stop-color="#2e6d8b"/></linearGradient></defs>
+ <rect width="520" height="340" fill="url(#sky)"/><circle cx="402" cy="83" r="36" fill="#f3c389" opacity=".8"/>
+ <path d="M0 198q110-42 212-6t308-10v158H0z" fill="#edcfad" opacity=".55"/>
+ <path d="M0 243L42 230V145h54v87h18V100h64v122h19V60h44v185h24V125h75v119h17V168h58v76h22v-99h65v97h38v100H0z" fill="url(#building)" opacity=".95"/>
+ <path d="M65 158h12m-12 24h12m58-59h23m-23 24h23m-23 24h23m84-66h13m-13 24h13m-13 24h13m76 19h25m-25 25h25m74 3h21" stroke="#c7e7f6" stroke-width="7" opacity=".5"/>
+ <path d="M210 170V24l-6 26v120z" fill="#2e6d8b"/><path d="M202 42l5-20 5 20" fill="#2e6d8b"/>
+ <path d="M0 245Q60 220 117 248T270 246T413 247T520 243V340H0z" fill="#2e6d8b" opacity=".2"/>
+ <path d="M0 274Q68 258 130 274t134 0t137 1t119-1" fill="none" stroke="#ffffff" stroke-opacity=".5" stroke-width="3"/>
+ </svg>

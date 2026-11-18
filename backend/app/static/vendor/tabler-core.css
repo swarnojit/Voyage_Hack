@@ -1,0 +1,5 @@
+/* Offline fallback: original TripParadox styles.css provides complete styling.
+   To install the authentic MIT-licensed Tabler framework locally, run:
+   npm install && npm run vendor:tabler
+   This file is then replaced by @tabler/core/dist/css/tabler.min.css.
+   No CDN or external network requests are required at runtime. */

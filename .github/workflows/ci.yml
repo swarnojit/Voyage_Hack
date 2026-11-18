@@ -1,0 +1,25 @@
+name: TripParadox Synthetic Security CI
+on:
+  push:
+  pull_request:
+jobs:
+  full-stack-checks:
+    runs-on: ubuntu-latest
+    env:
+      TP_DEMO_MODE: "true"
+      TP_JWT_SECRET: "tests-only-ci-secret-value-over-thirty-two-characters"
+      TP_ADMIN_PASSWORD: "SyntheticCIAdminPass123!"
+      TP_AGENCY_PASSWORD: "SyntheticCIAgencyPass123!"
+      TP_DATABASE_URL: "sqlite:///./ci-synthetic.db"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: pip install -r backend/requirements-dev.txt
+      - run: cd backend && python -m pytest tests -q
+      - run: python -m compileall -q backend/app
+      - run: node --check backend/app/static/app.js

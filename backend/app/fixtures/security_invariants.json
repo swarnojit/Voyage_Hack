@@ -1,0 +1,9 @@
+{
+  "version": "1.0.0",
+  "approved_by": "Synthetic demo security reviewer",
+  "rules": [
+    {"id": "BOLA-01", "description": "A booking is readable only by its owning agency or an approved administrator", "checker": "cross_agency"},
+    {"id": "FIN-01", "description": "A booking cannot be refunded for more than the amount originally paid", "checker": "double_refund"},
+    {"id": "LEGACY-01", "description": "Every active and legacy API must enforce the same agency boundary", "checker": "legacy_bypass"}
+  ]
+}

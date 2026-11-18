@@ -1,0 +1,3 @@
+// Simulated excerpt of a retired travel portal bundle, not current application code.
+const legacyBookingURL = '/sim/legacy/v1/bookings/101';
+const currentBookingURL = '/sim/bookings/101';

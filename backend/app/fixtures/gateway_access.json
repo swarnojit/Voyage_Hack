@@ -1,0 +1,8 @@
+{
+  "mock_data_only": true,
+  "observations": [
+    {"path":"/sim/bookings/101","method":"GET","age_days":2,"source":"business"},
+    {"path":"/sim/bookings/101/refund","method":"POST","age_days":5,"source":"business"},
+    {"path":"/sim/partner/shortcut/101","method":"GET","age_days":3,"source":"business"}
+  ]
+}

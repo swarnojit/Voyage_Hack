@@ -1,0 +1,13 @@
+# Direct packages pinned to the successfully tested local runtime (Nov 2026).
+# PostgreSQL Psycopg is not installed in the verification environment and is
+# intentionally range-constrained, NOT certified by the SQLite-only tests.
+fastapi==0.128.2
+uvicorn[standard]==0.48.0
+sqlalchemy==2.0.50
+pydantic==2.13.5
+httpx==0.28.1
+PyJWT==2.13.0
+argon2-cffi==25.1.0
+scikit-learn==1.8.0
+numpy==2.3.5
+psycopg[binary]>=3.2,<4

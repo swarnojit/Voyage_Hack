@@ -1,0 +1,13 @@
+{
+  "name": "tripparadox-studio",
+  "private": true,
+  "version": "2.1.0",
+  "description": "Local security operations studio adapted from Tabler dashboard patterns",
+  "license": "MIT",
+  "scripts": {
+    "vendor:tabler": "node frontend/vendor-tabler.mjs"
+  },
+  "devDependencies": {
+    "@tabler/core": "1.4.0"
+  }
+}

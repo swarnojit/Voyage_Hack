@@ -1,0 +1,455 @@
+{
+  "run": {
+    "id": 1,
+    "deploy_id": 1,
+    "status": "completed",
+    "started_at": "2026-11-17T20:30:15.240636",
+    "finished_at": "2026-11-17T20:30:15.536615",
+    "tests_run": 3,
+    "requests_sent": 10,
+    "confirmed": 3,
+    "summary": {
+      "outcomes": {
+        "legacy_bypass": {
+          "violated": true,
+          "confirmed": true,
+          "observed": "foreign=200"
+        },
+        "double_refund": {
+          "violated": true,
+          "confirmed": true,
+          "observed": "parallel total=2000000 paise"
+        },
+        "cross_agency": {
+          "violated": true,
+          "confirmed": true,
+          "observed": "own=200, foreign=200"
+        }
+      },
+      "inventory": {
+        "/sim/bookings/{id}": "active",
+        "/sim/bookings/{id}/refund": "active",
+        "/sim/legacy/v1/bookings/{id}": "zombie",
+        "/sim/partner/shortcut/{id}": "shadow"
+      },
+      "target": "bundled-synthetic-ASGI-only",
+      "max_requests": 40,
+      "test_set": [
+        "legacy_bypass",
+        "double_refund",
+        "cross_agency"
+      ],
+      "ml_ranked_plan": [
+        {
+          "case": "legacy_bypass",
+          "risk_priority_score": 0.871,
+          "predicted_class": "legacy_api",
+          "class_confidence": 0.471,
+          "model": "RF75 + TFIDF-LogReg",
+          "feature_vector": {
+            "authorization_boundary": 1,
+            "financial_mutation": 0,
+            "legacy_endpoint": 1,
+            "undocumented_endpoint": 1,
+            "privileged_operation": 0,
+            "cross_role_flow": 1,
+            "write_method": 0,
+            "recently_changed": 1
+          },
+          "reason": "Risk model ranks approved tests; no exploit-generation or external calls"
+        },
+        {
+          "case": "double_refund",
+          "risk_priority_score": 0.654,
+          "predicted_class": "financial_logic",
+          "class_confidence": 0.582,
+          "model": "RF75 + TFIDF-LogReg",
+          "feature_vector": {
+            "authorization_boundary": 0,
+            "financial_mutation": 1,
+            "legacy_endpoint": 0,
+            "undocumented_endpoint": 0,
+            "privileged_operation": 1,
+            "cross_role_flow": 0,
+            "write_method": 1,
+            "recently_changed": 1
+          },
+          "reason": "Risk model ranks approved tests; no exploit-generation or external calls"
+        },
+        {
+          "case": "cross_agency",
+          "risk_priority_score": 0.463,
+          "predicted_class": "authorization",
+          "class_confidence": 0.725,
+          "model": "RF75 + TFIDF-LogReg",
+          "feature_vector": {
+            "authorization_boundary": 1,
+            "financial_mutation": 0,
+            "legacy_endpoint": 0,
+            "undocumented_endpoint": 0,
+            "privileged_operation": 0,
+            "cross_role_flow": 1,
+            "write_method": 0,
+            "recently_changed": 1
+          },
+          "reason": "Risk model ranks approved tests; no exploit-generation or external calls"
+        }
+      ],
+      "no_external_network": true
+    }
+  },
+  "evidence": [
+    {
+      "id": 1,
+      "test": "legacy_bypass",
+      "universe": "counterfactual",
+      "passed": false,
+      "expected": "foreign=403",
+      "observed": "foreign=200",
+      "details": {
+        "foreign_status": 200,
+        "reproduced": true,
+        "rule": "Legacy endpoint must preserve agency access boundaries",
+        "synthetic_only": true
+      }
+    },
+    {
+      "id": 2,
+      "test": "double_refund",
+      "universe": "counterfactual",
+      "passed": false,
+      "expected": "refund total <= 1000000 paise",
+      "observed": "parallel total=2000000 paise",
+      "details": {
+        "baseline_total_paise": 1000000,
+        "alternate_total_paise": 2000000,
+        "paid_paise": 1000000,
+        "reproduced": true,
+        "responses": [
+          {
+            "status": 200,
+            "idempotent": false
+          },
+          {
+            "status": 200,
+            "idempotent": false
+          }
+        ],
+        "rule": "Refund must not exceed original payment",
+        "synthetic_only": true
+      }
+    },
+    {
+      "id": 3,
+      "test": "cross_agency",
+      "universe": "counterfactual",
+      "passed": false,
+      "expected": "own=200, foreign=403",
+      "observed": "own=200, foreign=200",
+      "details": {
+        "authorized_status": 200,
+        "cross_agency_status": 200,
+        "reproduced": true,
+        "rule": "Agency ownership must be enforced",
+        "synthetic_only": true
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": 1,
+      "phase": "init",
+      "title": "Safety envelope established",
+      "status": "active",
+      "details": {
+        "mode": "in-process local ASGI only",
+        "budget": 40,
+        "allowlist": [
+          "/sim/bookings/{id}",
+          "/sim/bookings/{id}/refund",
+          "/sim/legacy/v1/bookings/{id}"
+        ],
+        "external_requests": false,
+        "backend": "services.safety.SafetyGate"
+      },
+      "created_at": "2026-11-17T20:30:15.243856"
+    },
+    {
+      "id": 2,
+      "phase": "ml",
+      "title": "Local ML models trained and evaluated",
+      "status": "complete",
+      "details": {
+        "backend": "services.ml_planner.train_models",
+        "models": [
+          "RandomForestClassifier",
+          "TF-IDF + LogisticRegression"
+        ],
+        "training_samples": 1200,
+        "synthetic_holdout_accuracy": 0.843,
+        "dataset": "GENERATED SYNTHETIC EXAMPLES ONLY",
+        "warning": "Synthetic test accuracy is NOT real-world vulnerability accuracy"
+      },
+      "created_at": "2026-11-17T20:30:15.257181"
+    },
+    {
+      "id": 3,
+      "phase": "plan",
+      "title": "AI scored and prioritized the approved security journeys",
+      "status": "complete",
+      "details": {
+        "backend": "services.ml_planner.prioritize",
+        "ranked_tests": [
+          {
+            "case": "legacy_bypass",
+            "risk_priority_score": 0.871,
+            "predicted_class": "legacy_api",
+            "class_confidence": 0.471,
+            "model": "RF75 + TFIDF-LogReg",
+            "feature_vector": {
+              "authorization_boundary": 1,
+              "financial_mutation": 0,
+              "legacy_endpoint": 1,
+              "undocumented_endpoint": 1,
+              "privileged_operation": 0,
+              "cross_role_flow": 1,
+              "write_method": 0,
+              "recently_changed": 1
+            },
+            "reason": "Risk model ranks approved tests; no exploit-generation or external calls"
+          },
+          {
+            "case": "double_refund",
+            "risk_priority_score": 0.654,
+            "predicted_class": "financial_logic",
+            "class_confidence": 0.582,
+            "model": "RF75 + TFIDF-LogReg",
+            "feature_vector": {
+              "authorization_boundary": 0,
+              "financial_mutation": 1,
+              "legacy_endpoint": 0,
+              "undocumented_endpoint": 0,
+              "privileged_operation": 1,
+              "cross_role_flow": 0,
+              "write_method": 1,
+              "recently_changed": 1
+            },
+            "reason": "Risk model ranks approved tests; no exploit-generation or external calls"
+          },
+          {
+            "case": "cross_agency",
+            "risk_priority_score": 0.463,
+            "predicted_class": "authorization",
+            "class_confidence": 0.725,
+            "model": "RF75 + TFIDF-LogReg",
+            "feature_vector": {
+              "authorization_boundary": 1,
+              "financial_mutation": 0,
+              "legacy_endpoint": 0,
+              "undocumented_endpoint": 0,
+              "privileged_operation": 0,
+              "cross_role_flow": 1,
+              "write_method": 0,
+              "recently_changed": 1
+            },
+            "reason": "Risk model ranks approved tests; no exploit-generation or external calls"
+          }
+        ],
+        "control": "Every candidate must appear in approved invariant registry"
+      },
+      "created_at": "2026-11-17T20:30:15.258314"
+    },
+    {
+      "id": 4,
+      "phase": "inventory",
+      "title": "API surface reconstructed from approved fixtures",
+      "status": "complete",
+      "details": {
+        "backend": "services.inventory.rebuild_inventory",
+        "sql_tables": [
+          "api_inventory",
+          "traffic"
+        ],
+        "classification": {
+          "/sim/bookings/{id}": "active",
+          "/sim/bookings/{id}/refund": "active",
+          "/sim/legacy/v1/bookings/{id}": "zombie",
+          "/sim/partner/shortcut/{id}": "shadow"
+        }
+      },
+      "created_at": "2026-11-17T20:30:15.266511"
+    },
+    {
+      "id": 5,
+      "phase": "fork",
+      "title": "Forking isolated booking universes \u00b7 legacy_bypass",
+      "status": "active",
+      "details": {
+        "case": "legacy_bypass",
+        "backend": "services.engine.fresh_universe",
+        "sql_tables": [
+          "bookings",
+          "refunds"
+        ],
+        "model_risk_score": 0.871,
+        "principle": "No real booking, payment or supplier API is touched"
+      },
+      "created_at": "2026-11-17T20:30:15.269074"
+    },
+    {
+      "id": 6,
+      "phase": "oracle",
+      "title": "Business invariant evaluated \u00b7 legacy_bypass",
+      "status": "warning",
+      "details": {
+        "case": "legacy_bypass",
+        "backend": "services.engine.case_legacy_bypass",
+        "expected": "foreign=403",
+        "observed": "foreign=200",
+        "reproduced": true,
+        "violation": true,
+        "verified_by": "deterministic persisted SQL state and HTTP response"
+      },
+      "created_at": "2026-11-17T20:30:15.330702"
+    },
+    {
+      "id": 7,
+      "phase": "evidence",
+      "title": "Verified issue \u00b7 legacy_bypass",
+      "status": "warning",
+      "details": {
+        "case": "legacy_bypass",
+        "backend": "services.engine.persist_test",
+        "sql_tables": [
+          "evidence",
+          "findings",
+          "tickets"
+        ],
+        "human_review": true,
+        "requests_so_far": 2
+      },
+      "created_at": "2026-11-17T20:30:15.335118"
+    },
+    {
+      "id": 8,
+      "phase": "fork",
+      "title": "Forking isolated booking universes \u00b7 double_refund",
+      "status": "active",
+      "details": {
+        "case": "double_refund",
+        "backend": "services.engine.fresh_universe",
+        "sql_tables": [
+          "bookings",
+          "refunds"
+        ],
+        "model_risk_score": 0.654,
+        "principle": "No real booking, payment or supplier API is touched"
+      },
+      "created_at": "2026-11-17T20:30:15.336221"
+    },
+    {
+      "id": 9,
+      "phase": "oracle",
+      "title": "Business invariant evaluated \u00b7 double_refund",
+      "status": "warning",
+      "details": {
+        "case": "double_refund",
+        "backend": "services.engine.case_double_refund",
+        "expected": "refund total <= 1000000 paise",
+        "observed": "parallel total=2000000 paise",
+        "reproduced": true,
+        "violation": true,
+        "verified_by": "deterministic persisted SQL state and HTTP response"
+      },
+      "created_at": "2026-11-17T20:30:15.462586"
+    },
+    {
+      "id": 10,
+      "phase": "evidence",
+      "title": "Verified issue \u00b7 double_refund",
+      "status": "warning",
+      "details": {
+        "case": "double_refund",
+        "backend": "services.engine.persist_test",
+        "sql_tables": [
+          "evidence",
+          "findings",
+          "tickets"
+        ],
+        "human_review": true,
+        "requests_so_far": 7
+      },
+      "created_at": "2026-11-17T20:30:15.464959"
+    },
+    {
+      "id": 11,
+      "phase": "fork",
+      "title": "Forking isolated booking universes \u00b7 cross_agency",
+      "status": "active",
+      "details": {
+        "case": "cross_agency",
+        "backend": "services.engine.fresh_universe",
+        "sql_tables": [
+          "bookings",
+          "refunds"
+        ],
+        "model_risk_score": 0.463,
+        "principle": "No real booking, payment or supplier API is touched"
+      },
+      "created_at": "2026-11-17T20:30:15.466095"
+    },
+    {
+      "id": 12,
+      "phase": "oracle",
+      "title": "Business invariant evaluated \u00b7 cross_agency",
+      "status": "warning",
+      "details": {
+        "case": "cross_agency",
+        "backend": "services.engine.case_cross_agency",
+        "expected": "own=200, foreign=403",
+        "observed": "own=200, foreign=200",
+        "reproduced": true,
+        "violation": true,
+        "verified_by": "deterministic persisted SQL state and HTTP response"
+      },
+      "created_at": "2026-11-17T20:30:15.532971"
+    },
+    {
+      "id": 13,
+      "phase": "evidence",
+      "title": "Verified issue \u00b7 cross_agency",
+      "status": "warning",
+      "details": {
+        "case": "cross_agency",
+        "backend": "services.engine.persist_test",
+        "sql_tables": [
+          "evidence",
+          "findings",
+          "tickets"
+        ],
+        "human_review": true,
+        "requests_so_far": 10
+      },
+      "created_at": "2026-11-17T20:30:15.535505"
+    },
+    {
+      "id": 14,
+      "phase": "final",
+      "title": "Run finalized and stored in SQL",
+      "status": "completed",
+      "details": {
+        "status": "completed",
+        "tests": 3,
+        "confirmed_findings": 3,
+        "requests_sent": 10,
+        "backend": "services.engine.run_pipeline",
+        "sql_tables": [
+          "scan_runs",
+          "run_events",
+          "audit"
+        ]
+      },
+      "created_at": "2026-11-17T20:30:15.538345"
+    }
+  ]
+}

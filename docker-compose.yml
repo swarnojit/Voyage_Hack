@@ -1,0 +1,57 @@
+# PRIMARY demo deployment: PostgreSQL stores users, model registry, predictions,
+# scan runs, trace events, synthetic bookings, audit and verified evidence.
+# No application ports exposed beyond host loopback. Never expose this synthetic
+# vulnerable demo to the Internet or connect real customer data.
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tripparadox
+      POSTGRES_USER: tp_admin
+      POSTGRES_PASSWORD: ${TP_PG_ADMIN_PASSWORD:?Generate credentials with python scripts/bootstrap.py}
+      TP_DB_PASSWORD: ${TP_DB_PASSWORD:?Generate credentials with python scripts/bootstrap.py}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tp_admin -d tripparadox"]
+      interval: 4s
+      timeout: 4s
+      retries: 20
+    volumes:
+      - tripparadox_pgdata:/var/lib/postgresql/data
+      - ./docker/postgres/01-create-app-role.sh:/docker-entrypoint-initdb.d/01-create-app-role.sh:ro
+    networks: [lab_internal]
+    security_opt: ["no-new-privileges:true"]
+  app:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      TP_DATABASE_URL: postgresql+psycopg://tp_app:${TP_DB_PASSWORD}@postgres:5432/tripparadox
+      TP_DEMO_MODE: "true"
+      TP_ALLOW_INTENTIONAL_FLAWS: ${TP_ALLOW_INTENTIONAL_FLAWS:-false}
+      PYTHONDONTWRITEBYTECODE: "1"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8000:8000"
+    networks: [lab_internal]
+    security_opt: ["no-new-privileges:true"]
+    read_only: true
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=64m"]
+    cap_drop: ["ALL"]
+    pids_limit: 128
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/db', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 25s
+  # `docker compose exec postgres psql -U tp_admin -d tripparadox` for inspection.
+networks:
+  lab_internal:
+    driver: bridge
+volumes:
+  tripparadox_pgdata:

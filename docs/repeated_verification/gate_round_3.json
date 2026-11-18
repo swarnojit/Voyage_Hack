@@ -1,0 +1,21 @@
+{
+  "timestamp_utc": "2026-11-18T17:28:03.932126+00:00",
+  "target": "isolated in-process fictional travel API",
+  "mode": "release-gate only, no external network or customer data",
+  "safe_scenarios_scanned": 15,
+  "safe_scenario_confirmed_findings": 0,
+  "injected_vulnerable_scans": 12,
+  "seeded_vulnerabilities_confirmed": 36,
+  "seeded_vulnerabilities_expected": 36,
+  "patch_and_retest_cycles": 3,
+  "runs_total": 30,
+  "model_predictions_persisted": 84,
+  "pending_runs_after_gate": 0,
+  "mean_synthetic_scan_seconds": 0.407,
+  "max_synthetic_scan_seconds": 0.5514,
+  "risk_model_version": "5646a7793faebffd",
+  "risk_model_synthetic_roc_auc": 0.8977,
+  "threat_model_synthetic_macro_f1": 0.8166,
+  "result": "PASS: covered secure invariants found no violations; planted scenarios still detected",
+  "limits": "Does NOT certify zero vulnerabilities; does NOT test live TBO or PostgreSQL Docker runtime"
+}

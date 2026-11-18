@@ -1,0 +1,16 @@
+{
+  "test": "Chromium real frontend with FastAPI test bridge",
+  "scope": "in-process only",
+  "actions": [
+    "JWT login and overview rendering",
+    "Model Lab features and SQL-persisted inference",
+    "Travel catalog and synthetic SQL room hold",
+    "Secure scan zero verified findings in covered cases",
+    "All three deliberately planted bugs detected and recorded",
+    "Database connection dashboard",
+    "Light/dark theme toggle",
+    "Mobile responsive drawer"
+  ],
+  "browser_errors": [],
+  "result": "PASS"
+}

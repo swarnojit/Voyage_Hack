@@ -1,0 +1,15 @@
+{
+  "scope": "127.0.0.1 only / fake accounts / disposable SQLite",
+  "checks": [
+    "actual HTTP/Uvicorn boot, JWT login, DB ready",
+    "real HTTP frontend and security headers",
+    "three real sklearn models + SQL model registry on HTTP",
+    "HTTP backend secure full scan: 0 expected findings",
+    "HTTP backend all full scan: 3 expected findings",
+    "graceful Uvicorn shutdown",
+    "cold restart retained 2 scan records and model predictions"
+  ],
+  "postgresql_runtime_tested": false,
+  "result": "PASS",
+  "limits": "Uvicorn+SQLite smoke only; PostgreSQL container unavailable; no security certification"
+}

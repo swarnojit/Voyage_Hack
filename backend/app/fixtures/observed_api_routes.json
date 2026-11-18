@@ -1,0 +1,9 @@
+{
+  "description": "Synthetic HAR/JS discovery observations, not real API traffic",
+  "routes": [
+    {"path": "/sim/bookings/{id}", "method": "GET", "source": "browser-HAR", "documented": true},
+    {"path": "/sim/bookings/{id}/refund", "method": "POST", "source": "browser-HAR", "documented": true},
+    {"path": "/sim/legacy/v1/bookings/{id}", "method": "GET", "source": "old-JS-bundle", "documented": false},
+    {"path": "/sim/partner/shortcut/{id}", "method": "GET", "source": "gateway-traffic", "documented": false}
+  ]
+}

@@ -1,0 +1,4 @@
+[
+  {"path":"/sim/bookings/{id}","method":"GET","owner":"Booking API Team"},
+  {"path":"/sim/bookings/{id}/refund","method":"POST","owner":"Payments Team"}
+]
